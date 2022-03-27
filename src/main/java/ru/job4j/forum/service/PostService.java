@@ -3,6 +3,7 @@ package ru.job4j.forum.service;
 import org.springframework.stereotype.Service;
 import ru.job4j.forum.model.Post;
 import ru.job4j.forum.repository.PostMem;
+import ru.job4j.forum.repository.PostRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,22 +11,24 @@ import java.util.List;
 
 @Service
 public class PostService {
-    private PostMem posts;
+    private PostRepository posts;
 
-    public PostService(PostMem posts) {
+    public PostService(PostRepository posts) {
         this.posts = posts;
     }
 
     public Post add(Post post) {
-        posts.add(post);
+        posts.save(post);
         return post;
     }
 
     public Post findById(int id) {
-        return posts.findById(id);
+        return posts.findById((long) id).get();
     }
 
     public Collection<Post> getAll() {
-        return posts.findAll();
+        List<Post> rsl = new ArrayList<>();
+        posts.findAll().forEach(rsl::add);
+        return rsl;
     }
 }
