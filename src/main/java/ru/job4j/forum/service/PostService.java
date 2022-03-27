@@ -7,6 +7,7 @@ import ru.job4j.forum.repository.PostRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 @Service
@@ -18,12 +19,13 @@ public class PostService {
     }
 
     public Post add(Post post) {
+        post.setCreated(new GregorianCalendar());
         posts.save(post);
         return post;
     }
 
     public Post findById(int id) {
-        return posts.findById((long) id).get();
+        return posts.findById(id).get();
     }
 
     public Collection<Post> getAll() {
