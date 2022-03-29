@@ -1,6 +1,7 @@
 package ru.job4j.forum.control;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -15,7 +16,11 @@ import ru.job4j.forum.service.PostService;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -43,5 +48,18 @@ public class PostControlTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("update"));
+    }
+
+    @Test
+    @WithMockUser
+    public void whenAddPost() throws Exception {
+        this.mockMvc.perform(post("/save")
+                        .param("name","Куплю").param("description", "Лада Гранта"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+        ArgumentCaptor<Post> argument = ArgumentCaptor.forClass(Post.class);
+        verify(service).add(argument.capture());
+        assertThat(argument.getValue().getName(), is("Куплю"));
+        assertThat(argument.getValue().getDescription(), is("Лада Гранта"));
     }
 }
