@@ -10,7 +10,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.forum.Main;
+import ru.job4j.forum.model.Authority;
 import ru.job4j.forum.model.User;
+import ru.job4j.forum.repository.AuthorityRepository;
 import ru.job4j.forum.repository.UserRepository;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -32,6 +34,8 @@ public class RegControlTest {
     private MockMvc mockMvc;
     @MockBean
     private UserRepository users;
+    @MockBean
+    private AuthorityRepository author;
 
     @Test
     @WithMockUser
@@ -60,6 +64,11 @@ public class RegControlTest {
         User user = new User();
         user.setUsername("Vasya");
         user.setPassword("987654");
+        user.setEnabled(true);
+        Authority authority = new Authority();
+        authority.setAuthority("ROLE_USER");
+        user.setAuthority(authority);
+        Mockito.when(author.findByAuthority(Mockito.anyString())).thenReturn(authority);
         Mockito.when(users.findByUsername(Mockito.anyString())).thenReturn(user);
         this.mockMvc.perform(post("/reg")
                         .param("username", "Vasya").param("password", "987654"))
