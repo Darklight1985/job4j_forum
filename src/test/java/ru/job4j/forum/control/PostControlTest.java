@@ -11,6 +11,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.job4j.forum.Main;
 import ru.job4j.forum.model.Post;
+import ru.job4j.forum.model.User;
 import ru.job4j.forum.service.PostService;
 
 import java.util.ArrayList;
@@ -44,10 +45,14 @@ public class PostControlTest {
     @Test
     @WithMockUser
     public void whenGetUpdate() throws Exception {
+        Post post = Post.of(5, "Пост",  "Продам");
+        Mockito.when(service.findById(Mockito.anyInt())).thenReturn(post);
+
         this.mockMvc.perform(get("/update?id=5"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(view().name("update"));
+                .andExpect(view().name("update"))
+                .andExpect(model().attribute("post", post));
     }
 
     @Test
