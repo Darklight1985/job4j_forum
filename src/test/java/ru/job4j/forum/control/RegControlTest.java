@@ -68,6 +68,7 @@ public class RegControlTest {
         Authority authority = new Authority();
         authority.setAuthority("ROLE_USER");
         user.setAuthority(authority);
+
         Mockito.when(author.findByAuthority(Mockito.anyString())).thenReturn(authority);
         Mockito.when(users.findByUsername(Mockito.anyString())).thenReturn(user);
         this.mockMvc.perform(post("/reg")
